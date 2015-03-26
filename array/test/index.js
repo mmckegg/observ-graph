@@ -242,7 +242,6 @@ test('push and insert a type by descriptor', function(t){
   var obj2 = obs.get(1)
   var obj3 = obs.get(2)
 
-
   obs.insert(1, { type: 'Test', id: '4', value: 'foobar'})
 
   t.deepEqual(obs(), [
