@@ -28,15 +28,15 @@ test('type creation and update by .set()', function(t){
   })
 
   obs.set([
-    { node: 'Test', value: 'foo' }
+    { type: 'Test', value: 'foo' }
   ])
 
   var obj = obs.get(0)
   t.equal(obj.type, 'Test')
-  t.deepEqual(obj(), { node: 'Test', value: 'foo' })
+  t.deepEqual(obj(), { type: 'Test', value: 'foo' })
 
   obs.set([
-    { node: 'Test', value: 'bar' }
+    { type: 'Test', value: 'bar' }
   ])
 
   // make sure the object was not regenerated
@@ -49,7 +49,7 @@ test('type creation and update by .set()', function(t){
   }
 
   obs.set([
-    { node: 'AnotherNode', value: 'bar' }
+    { type: 'AnotherNode', value: 'bar' }
   ])
 
   t.ok(destroyed, 'destroy called on object')
@@ -93,8 +93,8 @@ test('type add / remove by .set()', function(t){
   })
 
   obs.set([
-    {node: 'Foo', value: 123},
-    {node: 'Bar', value: 456}
+    {type: 'Foo', value: 123},
+    {type: 'Bar', value: 456}
   ])
 
   t.equal(obs.size(), 2)
@@ -109,9 +109,9 @@ test('type add / remove by .set()', function(t){
   changes.length = 0
 
   obs.set([
-    {node: 'Foo', value: 123},
-    {node: 'Bar', value: 456},
-    {node: 'Bar', value: 789},
+    {type: 'Foo', value: 123},
+    {type: 'Bar', value: 456},
+    {type: 'Bar', value: 789},
   ])
 
   t.equal(obs.size(), 3)
@@ -125,8 +125,8 @@ test('type add / remove by .set()', function(t){
   changes.length = 0
 
   obs.set([
-    {node: 'Bar', value: 456},
-    {node: 'Bar', value: 789},
+    {type: 'Bar', value: 456},
+    {type: 'Bar', value: 789},
   ])
 
   t.equal(obs.size(), 2)
@@ -155,13 +155,13 @@ test('setting type updates parent state', function(t){
   })
 
   obs.set([
-    { node: 'Test', value: 'foo' }
+    { type: 'Test', value: 'foo' }
   ])
 
   var obj = obs.get(0)
   obj.value.set('bar')
 
-  t.deepEqual(obs(), [{ node: 'Test', value: 'bar' }])
+  t.deepEqual(obs(), [{ type: 'Test', value: 'bar' }])
 
   t.end()
 })
@@ -181,9 +181,9 @@ test('move a type by reference', function(t){
   })
 
   obs.set([
-    { node: 'Test', id: '1', value: 'foo' },
-    { node: 'Test', id: '2', value: 'bar' },
-    { node: 'Test', id: '3', value: 'baz' }
+    { type: 'Test', id: '1', value: 'foo' },
+    { type: 'Test', id: '2', value: 'bar' },
+    { type: 'Test', id: '3', value: 'baz' }
   ])
 
 
@@ -195,9 +195,9 @@ test('move a type by reference', function(t){
   obs.move(obj2, 0)
 
   t.deepEqual(obs(), [
-    { node: 'Test', id: '2', value: 'bar' },
-    { node: 'Test', id: '1', value: 'foo' },
-    { node: 'Test', id: '3', value: 'baz' }
+    { type: 'Test', id: '2', value: 'bar' },
+    { type: 'Test', id: '1', value: 'foo' },
+    { type: 'Test', id: '3', value: 'baz' }
   ])
 
   t.equal(obs.get(0), obj2)
@@ -205,9 +205,9 @@ test('move a type by reference', function(t){
   obs.move(obj1, 2)
 
   t.deepEqual(obs(), [
-    { node: 'Test', id: '2', value: 'bar' },
-    { node: 'Test', id: '3', value: 'baz' },
-    { node: 'Test', id: '1', value: 'foo' }
+    { type: 'Test', id: '2', value: 'bar' },
+    { type: 'Test', id: '3', value: 'baz' },
+    { type: 'Test', id: '1', value: 'foo' }
   ])
 
   t.equal(obs.get(2), obj1)
@@ -232,9 +232,9 @@ test('push and insert a type by descriptor', function(t){
   })
 
   obs.set([
-    { node: 'Test', id: '1', value: 'foo' },
-    { node: 'Test', id: '2', value: 'bar' },
-    { node: 'Test', id: '3', value: 'baz' }
+    { type: 'Test', id: '1', value: 'foo' },
+    { type: 'Test', id: '2', value: 'bar' },
+    { type: 'Test', id: '3', value: 'baz' }
   ])
 
 
@@ -243,27 +243,27 @@ test('push and insert a type by descriptor', function(t){
   var obj3 = obs.get(2)
 
 
-  obs.insert({ node: 'Test', id: '4', value: 'foobar'}, 1)
+  obs.insert({ type: 'Test', id: '4', value: 'foobar'}, 1)
 
   t.deepEqual(obs(), [
-    { node: 'Test', id: '1', value: 'foo' },
-    { node: 'Test', id: '4', value: 'foobar'},
-    { node: 'Test', id: '2', value: 'bar' },
-    { node: 'Test', id: '3', value: 'baz' }
+    { type: 'Test', id: '1', value: 'foo' },
+    { type: 'Test', id: '4', value: 'foobar'},
+    { type: 'Test', id: '2', value: 'bar' },
+    { type: 'Test', id: '3', value: 'baz' }
   ])
 
-  obs.push({ node: 'Test', id: '5', value: 'foobaz'})
+  obs.push({ type: 'Test', id: '5', value: 'foobaz'})
 
   t.deepEqual(obs(), [
-    { node: 'Test', id: '1', value: 'foo' },
-    { node: 'Test', id: '4', value: 'foobar'},
-    { node: 'Test', id: '2', value: 'bar' },
-    { node: 'Test', id: '3', value: 'baz' },
-    { node: 'Test', id: '5', value: 'foobaz'}
+    { type: 'Test', id: '1', value: 'foo' },
+    { type: 'Test', id: '4', value: 'foobar'},
+    { type: 'Test', id: '2', value: 'bar' },
+    { type: 'Test', id: '3', value: 'baz' },
+    { type: 'Test', id: '5', value: 'foobaz'}
   ])
 
-  t.deepEqual(obs.get(1)(), { node: 'Test', id: '4', value: 'foobar'})
-  t.deepEqual(obs.get(4)(), { node: 'Test', id: '5', value: 'foobaz'})
+  t.deepEqual(obs.get(1)(), { type: 'Test', id: '4', value: 'foobar'})
+  t.deepEqual(obs.get(4)(), { type: 'Test', id: '5', value: 'foobaz'})
 
   t.end()
 })
@@ -296,18 +296,18 @@ test('change type from child', function(t){
     })
   })
 
-  obs.set([ { node: 'Foo', id: 'test', value: 456 } ])
+  obs.set([ { type: 'Foo', id: 'test', value: 456 } ])
 
   var obj = obs.get(0)
   t.equal(obj.type, 'Foo')
 
-  obj.set({ node: 'Bar', id: 'test', value: 456 })
+  obj.set({ type: 'Bar', id: 'test', value: 456 })
 
   var obj2 = obs.get(0)
   t.equal(obj2.value(), 456)
   t.equal(obj2.type, 'Bar')
 
-  obj2.set({ node: 'Foo', id: 'test', value: 456 })
+  obj2.set({ type: 'Foo', id: 'test', value: 456 })
 
   var obj3 = obs.get(0)
   t.equal(obj3.type, 'Foo')
