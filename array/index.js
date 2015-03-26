@@ -48,6 +48,8 @@ function ObservGraphArray(parentContext){
     var item = ctor(obs.context)
 
     splice(index, 0, item)
+    typeList[index] = ctor
+
     listen(index)
     refresh()
 
@@ -104,6 +106,7 @@ function ObservGraphArray(parentContext){
 
     // trim the excess
     typeList.length = rawList.length = listeners.length = obs._list.length = data.length
+    obs.size.set(data.length)
 
     // notify
     if (difference > 0){
@@ -126,10 +129,14 @@ function ObservGraphArray(parentContext){
   //
 
   function updateItem(index, raw){
+
+
     var item = obs._list[index]
-    var ctor = getType(raw)
+    var ctor = raw && getType(raw)
 
     var oldType = typeList[index]
+
+    console.log(ctor && ctor.name, oldType && oldType.name)
 
     if (item && ctor === oldType){
       item.set(raw)
@@ -142,12 +149,13 @@ function ObservGraphArray(parentContext){
 
       obs._list[index] = null
 
-      if (item){
+      if (raw){
         // create
         if (typeof ctor === 'function'){
-          item = ctor(context)
+          item = ctor(obs.context)
           item.set(raw)
           obs._list[index] = item
+          typeList[index] = ctor
           listen(index)
         }
       }
@@ -196,6 +204,7 @@ function ObservGraphArray(parentContext){
   }
 
   function listen(index){
+    var item = getItem(index)
     listeners[index] = item(function(){
       onInnerUpdate(item)
     })
@@ -224,6 +233,7 @@ function ObservGraphArray(parentContext){
         var updates = []
         
         var raw = item()
+        var ctor = getType(raw)
 
         if (ctor !== oldType){
           if (updateItem(index, raw)){
