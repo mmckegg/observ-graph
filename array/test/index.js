@@ -97,7 +97,7 @@ test('type add / remove by .set()', function(t){
     {node: 'Bar', value: 456}
   ])
 
-  t.equal(obs.getLength(), 2)
+  t.equal(obs.size(), 2)
   t.equal(obs.get(0).type, 'Foo')
   t.equal(obs.get(1).type, 'Bar')
 
@@ -114,7 +114,7 @@ test('type add / remove by .set()', function(t){
     {node: 'Bar', value: 789},
   ])
 
-  t.equal(obs.getLength(), 3)
+  t.equal(obs.size(), 3)
   t.equal(obs.get(2).type, 'Bar')
 
   // check updates
@@ -129,7 +129,7 @@ test('type add / remove by .set()', function(t){
     {node: 'Bar', value: 789},
   ])
 
-  t.equal(obs.getLength(), 2)
+  t.equal(obs.size(), 2)
 
   // check updates
   t.equal(changes.length, 2)
