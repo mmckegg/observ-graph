@@ -60,8 +60,14 @@ function ObservGraphArray(parentContext){
     var index = getIndex(itemOrIndex)
     var item =  getItem(itemOrIndex)
 
-    splice(targetIndex, 0, item)
-    splice(index, 1)
+    if (index < targetIndex){
+      splice(targetIndex+1, 0, item)
+      splice(index, 1)
+    } else {
+      splice(index, 1)
+      splice(targetIndex, 0, item)
+    }
+
     refresh()
   }
 
