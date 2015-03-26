@@ -8,7 +8,8 @@ var set = GraphSet(options)
 ```
 
 **options**:
-- getType: TODO link to top-level docs about this
+
+- [getType](../README.md#gettype)
 
 ### set.add(raw)
 
