@@ -4,7 +4,7 @@ var GraphArray = require('../')
 var Observ = require('observ')
 var ObservStruct = require('observ-struct')
 
-var getTypes (types) {
+function getTypes (types) {
   return function (raw) {
     return types[raw.type]
   }
