@@ -136,8 +136,6 @@ function ObservGraphArray(parentContext){
 
     var oldType = typeList[index]
 
-    console.log(ctor && ctor.name, oldType && oldType.name)
-
     if (item && ctor === oldType){
       item.set(raw)
     } else {
