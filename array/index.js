@@ -83,6 +83,9 @@ function ObservGraphArray(parentContext){
   }
 
   obs(function(data){
+    // two-way data binding special case.
+    // must manually update size and broadcast updates
+
     if (currentTransaction === data){
       return false
     }
