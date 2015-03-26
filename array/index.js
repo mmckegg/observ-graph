@@ -46,8 +46,10 @@ function ObservGraphArray(parentContext){
   obs.insert = function(index, raw){
     var ctor = getType(raw)
     var item = ctor(obs.context)
+    item.set(raw)
 
     splice(index, 0, item)
+    rawList[index] = raw
     typeList[index] = ctor
 
     listen(index)
@@ -60,6 +62,10 @@ function ObservGraphArray(parentContext){
     var index = getIndex(itemOrIndex)
     var item =  getItem(itemOrIndex)
 
+    var listener = listeners[index]
+    var type = typeList[index]
+    var raw = rawList[index]
+
     if (index < targetIndex){
       splice(targetIndex+1, 0, item)
       splice(index, 1)
@@ -67,6 +73,10 @@ function ObservGraphArray(parentContext){
       splice(index, 1)
       splice(targetIndex, 0, item)
     }
+
+    listeners[targetIndex] = listener
+    typeList[targetIndex] = type
+    rawList[targetIndex] = raw
 
     refresh()
   }
@@ -159,6 +169,9 @@ function ObservGraphArray(parentContext){
       obs._list[index] = null
 
       if (raw){
+
+        rawList[index] = raw
+
         // create
         if (typeof ctor === 'function'){
           item = ctor(obs.context)
