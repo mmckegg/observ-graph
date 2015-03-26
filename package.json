@@ -1,0 +1,37 @@
+{
+  "name": "observ-graph",
+  "version": "0.0.0",
+  "description": "observable graph collections",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape {set,map,array,one,many}/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmckegg/observ-graph.git"
+  },
+  "keywords": [
+    "observ",
+    "observable",
+    "graph",
+    "collection",
+    "map",
+    "set",
+    "array",
+    "computed",
+    "materialized view",
+    "query"
+  ],
+  "contributors": [
+    "mmckegg",
+    "ahdinosaur"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mmckegg/observ-graph/issues"
+  },
+  "homepage": "https://github.com/mmckegg/observ-graph",
+  "devDependencies": {
+    "tape": "^3.5.0"
+  }
+}
