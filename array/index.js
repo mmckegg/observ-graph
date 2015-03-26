@@ -219,22 +219,20 @@ function ObservGraphArray(parentContext){
     var oldType = typeList[index]
 
     if (currentTransaction == NO_TRANSACTION){
-
       if (~index && oldType){
 
-          var updates = []
-          
-          var raw = item()
+        var updates = []
+        
+        var raw = item()
 
-          if (ctor !== oldType){
-            if (updateItem(index, raw)){
-              toBroadcast.push([index, 1, obs._list[index]])
-            }
+        if (ctor !== oldType){
+          if (updateItem(index, raw)){
+            toBroadcast.push([index, 1, obs._list[index]])
           }
-
-          rawList[index] = raw
-          refresh()
         }
+
+        rawList[index] = raw
+        refresh()
       }
     }
   }
