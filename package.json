@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/mmckegg/observ-graph",
   "devDependencies": {
+    "observ-struct": "^6.0.0",
     "tape": "^3.5.0"
   }
 }
