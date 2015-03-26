@@ -7,16 +7,16 @@ var computed = require('observ/computed')
 
 var getTypes = require('./util').getTypes
 
-test('map nested observ', function(t){
+test('map nested observ', function (t) {
   var obs = GraphArray({
     getType: getTypes({
-      Test: function(context){
+      Test: function (context) {
         var obs = ObservStruct({
           id: Observ(),
           value: Observ()
         })
 
-        obs.specialValue = computed([obs], function(data){
+        obs.specialValue = computed([obs], function (data) {
           return data.id + '-' + data.value
         })
 
@@ -34,10 +34,10 @@ test('map nested observ', function(t){
   ])
 
   var changes = []
-  values(function(change){
+  values(function (change) {
     changes.push(change)
   })
- 
+
   values.flush() // bypass nextTick
 
   t.equal(values.get(0), obs.get(0).specialValue)
@@ -52,16 +52,16 @@ test('map nested observ', function(t){
   t.end()
 })
 
-test('map nested observ with function', function(t){
+test('map nested observ with function', function (t) {
   var obs = GraphArray({
     getType: getTypes({
-      Test: function(context){
+      Test: function (context) {
         var obs = ObservStruct({
           id: Observ(),
           value: Observ()
         })
 
-        obs.specialValue = computed([obs], function(data){
+        obs.specialValue = computed([obs], function (data) {
           return data.id + '-' + data.value
         })
 
@@ -70,11 +70,11 @@ test('map nested observ with function', function(t){
     })
   })
 
-  var values = obs.map(function(x){
+  var values = obs.map(function (x) {
     return x.specialValue
-  }, function(x){
-    return x
-  })
+  }, function (x) {
+      return x
+    })
 
   obs.set([
     { type: 'Test', id: '1', value: 'foo' },
@@ -83,10 +83,10 @@ test('map nested observ with function', function(t){
   ])
 
   var changes = []
-  values(function(change){
+  values(function (change) {
     changes.push(change)
   })
- 
+
   values.flush() // bypass nextTick
 
   t.equal(values.get(0), obs.get(0))

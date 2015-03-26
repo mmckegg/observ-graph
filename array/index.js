@@ -5,7 +5,7 @@ var NO_TRANSACTION = {}
 
 module.exports = ObservGraphArray
 
-function ObservGraphArray(parentContext){
+function ObservGraphArray (parentContext) {
   var obs = Observ()
 
   var getType = parentContext.getType || defaultGetType
@@ -21,29 +21,29 @@ function ObservGraphArray(parentContext){
   obs.size = Observ(0)
 
   var broadcastUpdate = null
-  obs.onUpdate = Event(function(broadcast){
+  obs.onUpdate = Event(function (broadcast) {
     broadcastUpdate = broadcast
   })
 
-  obs.get = function(index){
+  obs.get = function (index) {
     return obs._list[index]
   }
 
-  obs.remove = function(itemOrIndex){
+  obs.remove = function (itemOrIndex) {
     var index = getIndex(itemOrIndex)
 
-    if (~currentIndex){
+    if (~index) {
       unlisten(index)
       splice(index, 1)
       refresh()
     }
   }
 
-  obs.push = function(raw){
+  obs.push = function (raw) {
     return obs.insert(obs.size(), raw)
   }
 
-  obs.insert = function(index, raw){
+  obs.insert = function (index, raw) {
     var ctor = getType(raw)
     var item = ctor(obs.context)
     item.set(raw)
@@ -58,16 +58,16 @@ function ObservGraphArray(parentContext){
     return item
   }
 
-  obs.move = function(itemOrIndex, targetIndex){
+  obs.move = function (itemOrIndex, targetIndex) {
     var index = getIndex(itemOrIndex)
-    var item =  getItem(itemOrIndex)
+    var item = getItem(itemOrIndex)
 
     var listener = listeners[index]
     var type = typeList[index]
     var raw = rawList[index]
 
-    if (index < targetIndex){
-      splice(targetIndex+1, 0, item)
+    if (index < targetIndex) {
+      splice(targetIndex + 1, 0, item)
       splice(index, 1)
     } else {
       splice(index, 1)
@@ -81,44 +81,39 @@ function ObservGraphArray(parentContext){
     refresh()
   }
 
-
-  obs.indexOf = function(item){
+  obs.indexOf = function (item) {
     return obs._list.indexOf(item)
   }
 
-  obs.forEach = function(iterator, ctx){
+  obs.forEach = function (iterator, ctx) {
     obs._list.forEach(iterator, ctx)
   }
 
-  obs.map = function(keyOrIterator){
+  obs.map = function (keyOrIterator) {}
 
-  }
+  obs.filter = function (keyOrIterator) {}
 
-  obs.filter = function(keyOrIterator){
-
-  }
-
-  obs(function(data){
+  obs(function (data) {
     // two-way data binding special case.
     // must manually update size and broadcast updates
 
-    if (currentTransaction === data){
+    if (currentTransaction === data) {
       return false
     }
 
     currentTransaction = data
 
-    if (!Array.isArray(data)){
+    if (!Array.isArray(data)) {
       data = []
     }
 
-    var maxLength = Math.max(data.length, rawList.length) 
-    var minLength = Math.min(data.length, rawList.length) 
+    var maxLength = Math.max(data.length, rawList.length)
+    var minLength = Math.min(data.length, rawList.length)
     var difference = data.length - rawList.length
 
     var updates = []
-    for (var i=0;i<maxLength;i++){
-      if (updateItem(i, data[i]) && i < minLength){
+    for (var i = 0; i < maxLength; i++) {
+      if (updateItem(i, data[i]) && i < minLength) {
         updates.push([i, 1, obs._list[i]])
       }
     }
@@ -130,14 +125,14 @@ function ObservGraphArray(parentContext){
     obs.size.set(data.length)
 
     // notify
-    if (difference > 0){
+    if (difference > 0) {
       var u = [minLength, 0]
-      for (var i=minLength;i<maxLength;i++){
-        u.push(obs._list[i])
+      for (var j = minLength; j < maxLength; j++) {
+        u.push(obs._list[j])
       }
       updates.push(u)
-    } else if (difference < 0){
-      updates.push([minLength-1, -difference])
+    } else if (difference < 0) {
+      updates.push([minLength - 1, -difference])
     }
 
     currentTransaction = NO_TRANSACTION
@@ -149,31 +144,27 @@ function ObservGraphArray(parentContext){
 
   //
 
-  function updateItem(index, raw){
-
-
+  function updateItem (index, raw) {
     var item = obs._list[index]
     var ctor = raw && getType(raw)
 
     var oldType = typeList[index]
 
-    if (item && ctor === oldType){
+    if (item && ctor === oldType) {
       item.set(raw)
     } else {
-
-      if (item){
+      if (item) {
         unlisten(index)
         item = null
       }
 
       obs._list[index] = null
 
-      if (raw){
-
+      if (raw) {
         rawList[index] = raw
 
         // create
-        if (typeof ctor === 'function'){
+        if (typeof ctor === 'function') {
           item = ctor(obs.context)
           item.set(raw)
           obs._list[index] = item
@@ -186,7 +177,7 @@ function ObservGraphArray(parentContext){
     }
   }
 
-  function refresh(){
+  function refresh () {
     // get current state
     var newValue = rawList.slice()
 
@@ -205,19 +196,19 @@ function ObservGraphArray(parentContext){
     currentTransaction = NO_TRANSACTION
   }
 
-  function getItem(itemOrIndex){
+  function getItem (itemOrIndex) {
     return (itemOrIndex instanceof Object) ?
-       itemOrIndex :
-       obs._list[itemOrIndex]
+      itemOrIndex :
+      obs._list[itemOrIndex]
   }
 
-  function getIndex(itemOrIndex){
+  function getIndex (itemOrIndex) {
     return (itemOrIndex instanceof Object) ?
-       obs._list.indexOf(itemOrIndex) :
-       itemOrIndex
+      obs._list.indexOf(itemOrIndex) :
+      itemOrIndex
   }
 
-  function splice(index, remove /*, inserts */){
+  function splice (index, remove /*, inserts */) {
     var args = toArray(arguments)
 
     toBroadcast.push(args)
@@ -233,40 +224,37 @@ function ObservGraphArray(parentContext){
     typeList.splice.apply(typeList, argsWithNullInserts)
   }
 
-  function listen(index){
+  function listen (index) {
     var item = getItem(index)
-    listeners[index] = item(function(){
+    listeners[index] = item(function () {
       onInnerUpdate(item)
     })
   }
 
-  function unlisten(index){
-    if (listeners[index]){
+  function unlisten (index) {
+    if (listeners[index]) {
       listeners[index]()
       listeners[index] = null
     }
 
     var item = obs._list[index]
 
-    if (item && typeof item.destroy === 'function'){
+    if (item && typeof item.destroy === 'function') {
       item.destroy()
     }
   }
 
-  function onInnerUpdate(item){
+  function onInnerUpdate (item) {
     var index = obs._list.indexOf(item)
     var oldType = typeList[index]
 
-    if (currentTransaction == NO_TRANSACTION){
-      if (~index && oldType){
-
-        var updates = []
-        
+    if (currentTransaction === NO_TRANSACTION) {
+      if (~index && oldType) {
         var raw = item()
         var ctor = getType(raw)
 
-        if (ctor !== oldType){
-          if (updateItem(index, raw)){
+        if (ctor !== oldType) {
+          if (updateItem(index, raw)) {
             toBroadcast.push([index, 1, obs._list[index]])
           }
         }
@@ -278,7 +266,7 @@ function ObservGraphArray(parentContext){
   }
 }
 
-function defaultGetType(raw){
+function defaultGetType (raw) {
   return Observ
 }
 
