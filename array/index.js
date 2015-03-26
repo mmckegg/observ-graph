@@ -106,6 +106,8 @@ function ObservGraphArray(parentContext){
 
     // trim the excess
     typeList.length = rawList.length = listeners.length = obs._list.length = data.length
+
+    // update size
     obs.size.set(data.length)
 
     // notify
@@ -193,12 +195,20 @@ function ObservGraphArray(parentContext){
        itemOrIndex
   }
 
-  function splice(index, remove, insert){
-    toBroadcast.push(toArray(arguments))
+  function splice(index, remove /*, inserts */){
+    var args = toArray(arguments)
+
+    toBroadcast.push(args)
+
+    var argsWithNullInserts = args.map(function (val, i) {
+      if (i < 2) { return val }
+      return null
+    })
+
     obs._list.splice.apply(obs._list, arguments)
-    listeners.splice.apply(listeners, arguments)
-    rawList.splice.apply(rawList, arguments)
-    typeList.splice.apply(typeList, arguments)
+    listeners.splice.apply(listeners, argsWithNullInserts)
+    rawList.splice.apply(rawList, argsWithNullInserts)
+    typeList.splice.apply(typeList, argsWithNullInserts)
   }
 
   function listen(index){
