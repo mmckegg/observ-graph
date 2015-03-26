@@ -5,7 +5,7 @@ var Observ = require('observ')
 var ObservStruct = require('observ-struct')
 var computed = require('observ/computed')
 
-var getTypes = require('./util').getTypes
+var getTypes = require('../../lib/get-types')
 
 test('map nested observ', function (t) {
   var obs = GraphArray({

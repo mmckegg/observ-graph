@@ -4,7 +4,7 @@ var GraphArray = require('../')
 var Observ = require('observ')
 var ObservStruct = require('observ-struct')
 
-var getTypes = require('./util').getTypes
+var getTypes = require('../../lib/get-types')
 
 test('type creation and update by .set()', function (t) {
   var obs = GraphArray({
