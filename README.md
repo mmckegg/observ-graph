@@ -6,7 +6,7 @@ observable graph collections
 
 ## API
 
-each collection is created used as follows:
+each collection is created as follows:
 
 ```
 var collection = GraphCollection(context)
