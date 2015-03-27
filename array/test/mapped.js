@@ -44,7 +44,7 @@ test('map nested observ', function (t) {
 
   obs.remove(obs.get(1))
   values.flush()
-  
+
   t.equal(changes.length, 2)
   t.deepEqual(changes[0], ['1-foo', '2-bar', '3-baz'])
   t.deepEqual(changes[1], ['1-foo', '3-baz'])
@@ -102,13 +102,17 @@ test('map nested observ with function', function (t) {
 test('multiple maps', function (t) {
   var values = GraphArray({
     getType: function () {
-      return ObservStruct({
-        first: ObservStruct({
-          second: ObservStruct({
-            third: Observ()
+      return function (context) {
+        return (
+          ObservStruct({
+            first: ObservStruct({
+              second: ObservStruct({
+                third: Observ()
+              })
+            })
           })
-        })
-      })
+        )
+      }
     }
   })
 
@@ -120,7 +124,7 @@ test('multiple maps', function (t) {
     return val.second
   })
 
-  var thirdMapped = thirdMapped.map(function (val) {
+  var thirdMapped = secondMapped.map(function (val) {
     return val.third
   })
 
@@ -130,7 +134,16 @@ test('multiple maps', function (t) {
     { first: { second: { third: 'baz' } } }
   ])
 
-  values.flush() // bypass nextTick
+  // bypass nextTick
+  function flush () {
+    ;[
+      firstMapped,
+      secondMapped,
+      thirdMapped
+    ].forEach(function (x) { x.flush() })
+  }
+
+  flush()
 
   t.equal(values.size(), 3)
   t.equal(firstMapped.size(), 3)
@@ -141,7 +154,7 @@ test('multiple maps', function (t) {
   ])
 
   values.remove(1)
-  values.flush()
+  flush()
 
   t.equal(values.size(), 2)
   t.equal(firstMapped.size(), 2)
