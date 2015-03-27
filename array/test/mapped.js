@@ -133,68 +133,45 @@ test('multiple maps', function (t) {
     thirdChanges.push(val)
   })
 
+  // helper to bypass nextTick
+  function flush () {
+    ;[ firstMapped, secondMapped, thirdMapped ]
+      .forEach(function (x) { x.flush() })
+  }
+
+  // helper to check values
+  function check (vals) {
+    flush()
+    t.deepEqual(values(), vals.map(function (val) {
+      return { first: { second: { third: val } } }
+    }))
+    t.deepEqual(firstMapped(), vals.map(function (val) {
+      return { second: { third: val } }
+    }))
+    t.deepEqual(secondMapped(), vals.map(function (val) {
+      return { third: val }
+    }))
+    t.deepEqual(thirdMapped(), vals)
+  }
+
   values.set([
     { first: { second: { third: 'foo' } } },
     { first: { second: { third: 'bar' } } },
     { first: { second: { third: 'baz' } } }
   ])
-
-  // bypass nextTick
-  function flush () {
-    ;[
-      firstMapped,
-      secondMapped,
-      thirdMapped
-    ].forEach(function (x) { x.flush() })
-  }
-
-  flush()
-
-  t.deepEqual(values(), [
-    { first: { second: { third: 'foo' } } },
-    { first: { second: { third: 'bar' } } },
-    { first: { second: { third: 'baz' } } }
-  ])
-  t.deepEqual(firstMapped(), [
-    { second: { third: 'foo' } },
-    { second: { third: 'bar' } },
-    { second: { third: 'baz' } }
-  ])
-  t.deepEqual(secondMapped(), [
-    { third: 'foo' },
-    { third: 'bar' },
-    { third: 'baz' }
-  ])
-  t.deepEqual(thirdMapped(), [
-    'foo',
-    'bar',
-    'baz'
-  ])
+  check(['foo', 'bar', 'baz'])
 
   values.remove(1)
-  flush()
+  check(['foo', 'baz'])
 
-  t.deepEqual(values(), [
-    { first: { second: { third: 'foo' } } },
-    { first: { second: { third: 'baz' } } }
-  ])
-  t.deepEqual(firstMapped(), [
-    { second: { third: 'foo' } },
-    { second: { third: 'baz' } }
-  ])
-  t.deepEqual(secondMapped(), [
-    { third: 'foo' },
-    { third: 'baz' }
-  ])
-  t.deepEqual(thirdMapped(), [
-    'foo',
-    'baz'
-  ])
+  values.get(1).first.set({ second: { third: 'quack' } })
+  check(['foo', 'quack'])
 
-  t.deepEqual(thirdChanges, [
-    ['foo', 'bar', 'baz'],
-    ['foo', 'baz']
-  ])
+  values.get(0).first.second.set({ third: 'chirp' })
+  check(['chirp', 'quack'])
+
+  values.insert(1, { first: { second: { third: 'pom' } } })
+  check(['chirp', 'pom', 'quack'])
 
   t.end()
 })
