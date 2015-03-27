@@ -1,5 +1,6 @@
 var Observ = require('observ')
 var Event = require('geval')
+var MappedGraphArray = require('./mapped.js')
 
 var NO_TRANSACTION = {}
 
@@ -89,7 +90,9 @@ function ObservGraphArray (parentContext) {
     obs._list.forEach(iterator, ctx)
   }
 
-  obs.map = function (keyOrIterator) {}
+  obs.map = function (keyOrIterator) {
+    return MappedGraphArray(obs, keyOrIterator)
+  }
 
   obs.filter = function (keyOrIterator) {}
 

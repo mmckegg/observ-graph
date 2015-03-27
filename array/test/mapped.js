@@ -44,7 +44,7 @@ test('map nested observ', function (t) {
 
   obs.remove(obs.get(1))
   values.flush()
-
+  
   t.equal(changes.length, 2)
   t.deepEqual(changes[0], ['1-foo', '2-bar', '3-baz'])
   t.deepEqual(changes[1], ['1-foo', '3-baz'])
@@ -72,9 +72,7 @@ test('map nested observ with function', function (t) {
 
   var values = obs.map(function (x) {
     return x.specialValue
-  }, function (x) {
-      return x
-    })
+  })
 
   obs.set([
     { type: 'Test', id: '1', value: 'foo' },
@@ -89,7 +87,7 @@ test('map nested observ with function', function (t) {
 
   values.flush() // bypass nextTick
 
-  t.equal(values.get(0), obs.get(0))
+  t.equal(values.get(0), obs.get(0).specialValue)
 
   obs.remove(obs.get(1))
   values.flush()
