@@ -56,7 +56,6 @@ function MappedGraphArray (array, keyOrFn) {
       // get current state
       var newValue = rawList.slice()
 
-
       // set observable to current state
       obs.set(newValue)
       obs.size.set(obs._list.length)
@@ -70,7 +69,6 @@ function MappedGraphArray (array, keyOrFn) {
   }
 
   function update (spliceDiff) {
-
     obs._list.splice.apply(obs._list, spliceDiff.map(spliceMapper(getValue)))
     listeners.splice.apply(listeners, spliceDiff.map(spliceMapper(addListener)))
     rawList.splice.apply(rawList, spliceDiff.map(spliceMapper(getRawValue)))
