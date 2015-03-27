@@ -69,7 +69,10 @@ function MappedGraphArray (array, keyOrFn) {
   }
 
   function update (spliceDiff) {
-    obs._list.splice.apply(obs._list, spliceDiff.map(spliceMapper(getValue)))
+    var mappedSplice = spliceDiff.map(spliceMapper(getValue))
+
+    toBroadcast.push(mappedSplice)
+    obs._list.splice.apply(obs._list, mappedSplice)
     listeners.splice.apply(listeners, spliceDiff.map(spliceMapper(addListener)))
     rawList.splice.apply(rawList, spliceDiff.map(spliceMapper(getRawValue)))
 
