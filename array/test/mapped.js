@@ -100,3 +100,58 @@ test('map nested observ with function', function (t) {
 
   t.end()
 })
+
+test('multiple maps', function (t) {
+  var values = GraphArray({
+    getType: function () {
+      return ObservStruct({
+        first: ObservStruct({
+          second: ObservStruct({
+            third: Observ()
+          })
+        })
+      })
+    }
+  })
+
+  var firstMapped = values.map(function (val) {
+    return val.first
+  })
+
+  var secondMapped = firstMapped.map(function (val) {
+    return val.second
+  })
+
+  var thirdMapped = thirdMapped.map(function (val) {
+    return val.third
+  })
+
+  values.set([
+    { first: { second: { third: 'foo' } } },
+    { first: { second: { third: 'bar' } } },
+    { first: { second: { third: 'baz' } } }
+  ])
+
+  values.flush() // bypass nextTick
+
+  t.equal(values.size(), 3)
+  t.equal(firstMapped.size(), 3)
+  t.equal(secondMapped.size(), 3)
+  t.equal(thirdMapped.size(), 3)
+  t.deepEqual(thirdMapped(), [
+    'foo', 'bar', 'baz'
+  ])
+
+  values.remove(1)
+  values.flush()
+
+  t.equal(values.size(), 2)
+  t.equal(firstMapped.size(), 2)
+  t.equal(secondMapped.size(), 2)
+  t.equal(thirdMapped.size(), 2)
+  t.deepEqual(thirdMapped(), [
+    'foo', 'baz'
+  ])
+
+  t.end()
+})
