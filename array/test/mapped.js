@@ -128,6 +128,11 @@ test('multiple maps', function (t) {
     return val.third
   })
 
+  var thirdChanges = []
+  thirdMapped(function (val) {
+    thirdChanges.push(val)
+  })
+
   values.set([
     { first: { second: { third: 'foo' } } },
     { first: { second: { third: 'bar' } } },
@@ -165,11 +170,6 @@ test('multiple maps', function (t) {
     'bar',
     'baz'
   ])
-
-  var thirdChanges = []
-  thirdMapped(function (val) {
-    thirdChanges.push(val)
-  })
 
   values.remove(1)
   flush()
