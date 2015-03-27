@@ -145,23 +145,55 @@ test('multiple maps', function (t) {
 
   flush()
 
-  t.equal(values.size(), 3)
-  t.equal(firstMapped.size(), 3)
-  t.equal(secondMapped.size(), 3)
-  t.equal(thirdMapped.size(), 3)
-  t.deepEqual(thirdMapped(), [
-    'foo', 'bar', 'baz'
+  t.deepEqual(values(), [
+    { first: { second: { third: 'foo' } } },
+    { first: { second: { third: 'bar' } } },
+    { first: { second: { third: 'baz' } } }
   ])
+  t.deepEqual(firstMapped(), [
+    { second: { third: 'foo' } },
+    { second: { third: 'bar' } },
+    { second: { third: 'baz' } }
+  ])
+  t.deepEqual(secondMapped(), [
+    { third: 'foo' },
+    { third: 'bar' },
+    { third: 'baz' }
+  ])
+  t.deepEqual(thirdMapped(), [
+    'foo',
+    'bar',
+    'baz'
+  ])
+
+  var thirdChanges = []
+  thirdMapped(function (val) {
+    thirdChanges.push(val)
+  })
 
   values.remove(1)
   flush()
 
-  t.equal(values.size(), 2)
-  t.equal(firstMapped.size(), 2)
-  t.equal(secondMapped.size(), 2)
-  t.equal(thirdMapped.size(), 2)
+  t.deepEqual(values(), [
+    { first: { second: { third: 'foo' } } },
+    { first: { second: { third: 'baz' } } }
+  ])
+  t.deepEqual(firstMapped(), [
+    { second: { third: 'foo' } },
+    { second: { third: 'baz' } }
+  ])
+  t.deepEqual(secondMapped(), [
+    { third: 'foo' },
+    { third: 'baz' }
+  ])
   t.deepEqual(thirdMapped(), [
-    'foo', 'baz'
+    'foo',
+    'baz'
+  ])
+
+  t.deepEqual(thirdChanges, [
+    ['foo', 'bar', 'baz'],
+    ['foo', 'baz']
   ])
 
   t.end()
