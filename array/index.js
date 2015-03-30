@@ -7,6 +7,8 @@ var NO_TRANSACTION = {}
 module.exports = ObservGraphArray
 
 function ObservGraphArray (parentContext) {
+  parentContext = parentContext || {}
+
   var obs = Observ()
 
   var getType = parentContext.getType || defaultGetType
