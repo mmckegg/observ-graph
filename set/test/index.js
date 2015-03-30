@@ -50,7 +50,7 @@ test('.add(), .remove(), .has(), .set()', function (t) {
 
   var val3 = { type: 'AnotherNode', value: 'baz' }
   obs.add(val3)
-  
+
   t.ok(obs.has(val3))
   var obj3 = obs.get(val3)
   t.notEqual(obj3, obj1)
@@ -65,8 +65,8 @@ test('.add(), .remove(), .has(), .set()', function (t) {
   obs.set([])
 
   t.ok(obj3destroyed, 'destroy called on object')
-  t.notOk(obj.has(val2))
-  t.notOk(obj.has(val3))
+  t.notOk(obs.has(val2))
+  t.notOk(obs.has(val3))
 
   t.end()
 })
