@@ -100,7 +100,7 @@ test('map nested observ with function', function (t) {
 })
 
 test('multiple maps', function (t) {
-  var values = GraphArray({
+  var obs = GraphArray({
     getType: function () {
       return function (context) {
         return (
@@ -116,7 +116,7 @@ test('multiple maps', function (t) {
     }
   })
 
-  var firstMapped = values.map(function (val) {
+  var firstMapped = obs.map(function (val) {
     return val.first
   })
 
@@ -139,10 +139,10 @@ test('multiple maps', function (t) {
       .forEach(function (x) { x.flush() })
   }
 
-  // helper to check values
+  // helper to check obs
   function check (vals) {
     flush()
-    t.deepEqual(values(), vals.map(function (val) {
+    t.deepEqual(obs(), vals.map(function (val) {
       return { first: { second: { third: val } } }
     }))
     t.deepEqual(firstMapped(), vals.map(function (val) {
@@ -154,24 +154,78 @@ test('multiple maps', function (t) {
     t.deepEqual(thirdMapped(), vals)
   }
 
-  values.set([
+  obs.set([
     { first: { second: { third: 'foo' } } },
     { first: { second: { third: 'bar' } } },
     { first: { second: { third: 'baz' } } }
   ])
   check(['foo', 'bar', 'baz'])
 
-  values.remove(1)
+  obs.remove(1)
   check(['foo', 'baz'])
 
-  values.get(1).first.set({ second: { third: 'quack' } })
+  obs.get(1).first.set({ second: { third: 'quack' } })
   check(['foo', 'quack'])
 
-  values.get(0).first.second.set({ third: 'chirp' })
+  obs.get(0).first.second.set({ third: 'chirp' })
   check(['chirp', 'quack'])
 
-  values.insert(1, { first: { second: { third: 'pom' } } })
+  obs.insert(1, { first: { second: { third: 'pom' } } })
   check(['chirp', 'pom', 'quack'])
+
+  t.end()
+})
+
+// TODO improve test
+test('multiple graphs', function (t) {
+  var things = GraphArray({
+    getType: function () {
+      return function () {
+        return ObservStruct({
+          description: Observ(),
+          ownerId: Observ()
+        })
+      }
+    }
+  })
+
+  var agents = GraphArray({
+    getType: function () {
+      return function () {
+        return ObservStruct({
+          id: Observ()
+        })
+      }
+    }
+  })
+
+  things.set([{
+    description: 'a bicycle',
+    ownerId: 'dinosaur'
+  }, {
+    description: 'a sailboat',
+    ownerId: 'notdinosaur'
+  }, {
+    description: 'a skirt',
+    ownerId: 'dinosaur'
+  }])
+
+  agents.set([{
+    id: 'dinosaur'
+  }])
+
+  var owned = agents.map(function (agent) {
+    var ownedByAgent = GraphArray()
+    things.forEach(function (thing) {
+      if (thing.ownerId() === agent.id()) {
+        ownedByAgent.push(thing())
+      }
+    })
+    return ownedByAgent
+  })
+
+  t.deepEqual(owned.get(0).get(0)(), things.get(0)())
+  t.deepEqual(owned.get(0).get(1)(), things.get(2)())
 
   t.end()
 })
