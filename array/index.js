@@ -1,17 +1,14 @@
-var Observ = require('observ')
-var Event = require('geval')
 var MappedGraphArray = require('./mapped.js')
+
+var GraphCollectionBase = require('../lib/base')
 
 var NO_TRANSACTION = {}
 
 module.exports = ObservGraphArray
 
 function ObservGraphArray (parentContext) {
-  parentContext = parentContext || {}
+  var obs = GraphCollectionBase(parentContext)
 
-  var obs = Observ()
-
-  var getType = parentContext.getType || defaultGetType
   var listeners = []
   var rawList = []
   var typeList = []
@@ -20,13 +17,6 @@ function ObservGraphArray (parentContext) {
   var currentTransaction = NO_TRANSACTION
 
   obs._list = []
-  obs.context = Object.create(parentContext)
-  obs.size = Observ(0)
-
-  var broadcastUpdate = null
-  obs.onUpdate = Event(function (broadcast) {
-    broadcastUpdate = broadcast
-  })
 
   obs.get = function (index) {
     return obs._list[index]
@@ -47,7 +37,7 @@ function ObservGraphArray (parentContext) {
   }
 
   obs.insert = function (index, raw) {
-    var ctor = getType(raw)
+    var ctor = obs._getType(raw)
     var item = ctor(obs.context)
     item.set(raw)
 
@@ -142,7 +132,7 @@ function ObservGraphArray (parentContext) {
 
     currentTransaction = NO_TRANSACTION
 
-    updates.forEach(broadcastUpdate)
+    updates.forEach(obs._broadcastUpdate)
   })
 
   return obs
@@ -151,7 +141,7 @@ function ObservGraphArray (parentContext) {
 
   function updateItem (index, raw) {
     var item = obs._list[index]
-    var ctor = raw && getType(raw)
+    var ctor = raw && obs._getType(raw)
 
     var oldType = typeList[index]
 
@@ -194,7 +184,7 @@ function ObservGraphArray (parentContext) {
     obs.size.set(obs._list.length)
 
     // broadcast accumulated splice updates
-    toBroadcast.forEach(broadcastUpdate)
+    toBroadcast.forEach(obs._broadcastUpdate)
     toBroadcast = []
 
     // end transaction
@@ -256,7 +246,7 @@ function ObservGraphArray (parentContext) {
     if (currentTransaction === NO_TRANSACTION) {
       if (~index && oldType) {
         var raw = item()
-        var ctor = getType(raw)
+        var ctor = obs._getType(raw)
 
         if (ctor !== oldType) {
           if (updateItem(index, raw)) {
@@ -269,10 +259,6 @@ function ObservGraphArray (parentContext) {
       }
     }
   }
-}
-
-function defaultGetType (raw) {
-  return Observ
 }
 
 function toArray (arr) {
